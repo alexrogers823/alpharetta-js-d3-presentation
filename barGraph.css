@@ -1,0 +1,23 @@
+.bar:hover {
+  fill: blue;
+}
+
+.yAxis {
+  font-size: 10px;
+}
+
+.categoryAxis {
+  font-size: 10px;
+  /* display: none; */
+}
+
+svg {
+  background-color: #dddddd;
+  /* background-color: rgb(225, 225, 225); */
+  border: 3px solid blue;
+}
+
+span {
+  font-weight: bold;
+  text-shadow: 1px 1px 1px #adadad;
+}
