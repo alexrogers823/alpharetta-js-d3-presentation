@@ -8,13 +8,12 @@ fetch('https://raw.githubusercontent.com/alexrogers823/interactiveBarGraph/maste
     dataset.push(...data);
   });
 
-const test = [];
-fetch('https://raw.githubusercontent.com/jongrim/flashcard-generator/master/firebase.json')
+const categoryWords = [];
+fetch('https://raw.githubusercontent.com/alexrogers823/interactiveBarGraph/master/InteractiveBarGraph/CategoryWords.json')
   .then(blob => blob.json())
-  .then(data => {
-    test.push(...data);
-    console.log(test);
-  })
+  .then(data => categoryWords.push(data)); //no spread because it isn't array-based JSON
+
+
 
 // Category labels. Find a way to add directly from month expenses data
 const categoryLabels = {
@@ -24,8 +23,8 @@ const categoryLabels = {
     color: [209, 145, 105]
   },
   Utilities: {
-    labels: ["Util"],
-    goal: 80,
+    labels: ["Util", "Utility", "Utilities"],
+    goal: 225,
     color: [165, 20, 165]
   },
   Phone: {
@@ -39,17 +38,17 @@ const categoryLabels = {
     color: [195, 195, 30]
   },
   Supplies: {
-    labels: ["Supplies", "Rain"],
-    goal: 50,
+    labels: ["Supplies", "Rain", "Bed"],
+    goal: 150,
     color: [42, 193, 243]
   },
   Technology: {
     labels: ["Tech"],
-    goal: 40,
+    goal: 60,
     color: [30, 240, 100]
   },
   Services: {
-    labels: ["Dry Cleaning"],
+    labels: ["Services", "Dry Cleaning", "Eyebrows"],
     goal: 30,
     color: [141, 155, 20]
   },
@@ -69,7 +68,7 @@ const categoryLabels = {
     color: [143, 15, 166]
   },
   "Other Food": {
-    labels: ["Res", "Snacks"],
+    labels: ["Other Food", "Res", "Snack", "Snacks", "Coffee", "Drink"],
     goal: 300,
     color: [15, 242, 28]
   },
@@ -84,7 +83,7 @@ const categoryLabels = {
     color: [188, 159, 198]
   },
   "Bank & Credit Card": {
-    labels: ["Credit Card", "Interest", "Atm"],
+    labels: ["Credit Card", "Interest", "Atm", "Cc", "Venmo"],
     goal: 40,
     color: [62, 141, 138]
   },
@@ -94,32 +93,32 @@ const categoryLabels = {
     color: [206, 117, 92]
   },
   "Vehicle Payments": {
-    labels: ["Vehicle Payments"],
-    goal: 20,
+    labels: ["Vehicle Payments", "Motorcycle", "Car"],
+    goal: 300,
     color: [115, 73, 238]
   },
   "Entertainment": {
-    labels: ["Movies"],
+    labels: ["Movies", "Bowling"],
     goal: 30,
     color: [206, 18, 160]
   },
   "Subscriptions": {
-    labels: ["Subscription", "Spotify"],
+    labels: ["Subscription", "Subscriptions", "Sub", "Spotify", "Xxx"],
     goal: 25,
     color: [124, 232, 134]
   },
   Travel: {
-    labels: ["Travel"],
-    goal: 200,
+    labels: ["Travel", "Flight"],
+    goal: 300,
     color: [118, 55, 65]
   },
   "Public Transportation": {
-    labels: ["Uber", "Marta"],
+    labels: ["Uber", "Marta", "Transporation"],
     goal: 25,
     color: [252, 158, 155]
   },
   "Special/Seasonal": {
-    labels: ["Graduation"],
+    labels: ["Special", "Seasonal", "Graduation", "Gift", "Spring Break", "Recital", "Contacts"],
     goal: null,
     color: [227, 250, 194]
   },
@@ -132,7 +131,7 @@ const categoryLabels = {
 
 // Scales and Axis (eventually use band scale for y-axis)
 const width = 1100;
-const height = 500;
+const height = 450;
 const categoryLength = Object.keys(categoryLabels).length;
 const moveX = 40;
 const xDistance = (width - moveX)/categoryLength;
@@ -182,7 +181,7 @@ const t = d3.transition().duration(750);
 // Without d3.json import
 const svgContainer = d3.select("body").append("svg")
 .attr("width", width)
-.attr("height", height+50)
+.attr("height", height+70)
 .append("g")
 .attr("transform", `translate(${moveX}, -10)`);
 // .call(axis);
@@ -281,7 +280,7 @@ function update(data, number) {
 // Calling the axis
 svgContainer.append("g")
   .attr("class", "yAxis")
-  .attr("transform", `translate(-10, 3)`)
+  .attr("transform", `translate(-8, 3)`)
   .call(axis);
 
 
@@ -291,20 +290,33 @@ svgContainer.append("g")
   .attr("transform", `translate(${moveX/2}, ${height+5})`)
   .call(categoryAxis)
   .selectAll("text")
-  .attr("transform", "rotate(90)");
+  .attr("transform", "rotate(45)");
 
+let pause = false;
 
 // Changing the data each second
-let flag = true, numeric = 1;
+let numeric = 1;
 setInterval(() => {
-  update(dataset, numeric);
-  flag = !flag;
-  numeric++;
-  if (numeric > 2) {
-    numeric = 1;
+  if (!pause) {
+    update(dataset, numeric);
+    numeric++;
+    if (numeric > 12) {
+      numeric = 1;
+    }
   }
-
 }, 1500);
+
+function showPause(e) {
+  console.log(e);
+}
+
+
+
+const svg = document.querySelector("svg");
+svg.onclick = e => {
+  pause = !pause;
+  showPause(e);
+}
 
 // console.log(example);
 // console.log(data1);

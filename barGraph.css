@@ -1,5 +1,5 @@
 .bar:hover {
-  fill: blue;
+  fill: black;
 }
 
 .yAxis {
@@ -9,6 +9,7 @@
 .categoryAxis {
   font-size: 10px;
   /* display: none; */
+
 }
 
 svg {
@@ -19,5 +20,10 @@ svg {
 
 span {
   font-weight: bold;
+  font-style: normal;
   text-shadow: 1px 1px 1px #adadad;
+}
+
+p {
+  font-style: italic;
 }
