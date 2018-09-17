@@ -316,6 +316,7 @@ function showPause(e) {
 const svg = document.querySelector("svg");
 svg.onclick = e => {
   pause = !pause;
+  console.dir(e) //Find where offsetX and offsetY are and have dot
   showPause(e);
 }
 
