@@ -5,7 +5,10 @@ fetch('https://raw.githubusercontent.com/alexrogers823/interactiveBarGraph/maste
   .then(blob => blob.json())
   .then(data => {
     console.timeEnd("Getting data");
+    // console.log(dataset);
+    // console.log(data);
     dataset.push(...data);
+    // console.log(dataset);
   });
 
 const categoryWords = [];
@@ -13,129 +16,141 @@ fetch('https://raw.githubusercontent.com/alexrogers823/interactiveBarGraph/maste
   .then(blob => blob.json())
   .then(data => categoryWords.push(data)); //no spread because it isn't array-based JSON
 
-const categoryLabels = fetch('https://gist.githubusercontent.com/alexrogers823/73335d86e2516993face9f7818bd9955/raw/5b823e9e8fd4a6371f4c145f615b90e3335bf0ad/barGraphCategories.json')
-  .then(blob => blob.json());
+let categoryLabels, categoryLength;
+let dataReady = false;
+fetch('https://gist.githubusercontent.com/alexrogers823/73335d86e2516993face9f7818bd9955/raw/89fa5fb90db60ff0949fd8af2d629b39d47d9dc6/barGraphCategories.json')
+  .then(blob => blob.json())
+  .then(data => {
+    // categoryLabels = Object.assign({}, data);
+    // cateogryLabels = JSON.parse(JSON.stringify(data));
+    categoryLabels = data;
+    dataReady = true;
+    console.log(categoryLabels);
+    categoryLength = Object.keys(categoryLabels).length;
+    xDistance = (width - moveX)/categoryLength;
+  });
+
 
 // Category labels. Find a way to add directly from month expenses data
 // const categoryLabels = {
-//   Rent: {
-//     labels: ["Rent"],
-//     goal: 800,
-//     color: [209, 145, 105]
+//   "Rent": {
+//     "labels": ["Rent"],
+//     "goal": 800,
+//     "color": [209, 145, 105]
 //   },
-//   Utilities: {
-//     labels: ["Util", "Utility", "Utilities"],
-//     goal: 225,
-//     color: [165, 20, 165]
+//   "Utilities": {
+//     "labels": ["Util", "Utility", "Utilities"],
+//     "goal": 225,
+//     "color": [165, 20, 165]
 //   },
-//   Phone: {
-//     labels: ["Phone"],
-//     goal: 65,
-//     color: [70, 150, 215]
+//   "Phone": {
+//     "labels": ["Phone"],
+//     "goal": 65,
+//     "color": [70, 150, 215]
 //   },
-//   Apparel: {
-//     labels: ["Clothes"],
-//     goal: 50,
-//     color: [195, 195, 30]
+//   "Apparel": {
+//     "labels": ["Clothes"],
+//     "goal": 50,
+//     "color": [195, 195, 30]
 //   },
-//   Supplies: {
-//     labels: ["Supplies", "Rain", "Bed"],
-//     goal: 150,
-//     color: [42, 193, 243]
+//   "Supplies": {
+//     "labels": ["Supplies", "Rain", "Bed"],
+//     "goal": 150,
+//     "color": [42, 193, 243]
 //   },
-//   Technology: {
-//     labels: ["Tech"],
-//     goal: 60,
-//     color: [30, 240, 100]
+//   "Technology": {
+//     "labels": ["Tech"],
+//     "goal": 60,
+//     "color": [30, 240, 100]
 //   },
-//   Services: {
-//     labels: ["Services", "Dry Cleaning", "Eyebrows"],
-//     goal: 30,
-//     color: [141, 155, 20]
+//   "Services": {
+//     "labels": ["Services", "Dry Cleaning", "Eyebrows"],
+//     "goal": 30,
+//     "color": [141, 155, 20]
 //   },
 //   "Health/Gym": {
-//     labels: ["Health", "Gym"],
-//     goal: 50,
-//     color: [164, 72, 235]
+//     "labels": ["Health", "Gym"],
+//     "goal": 50,
+//     "color": [164, 72, 235]
 //   },
-//   Haircut: {
-//     labels: ["Haircut"],
-//     goal: 40,
-//     color: [99, 196, 126]
+//   "Haircut": {
+//     "labels": ["Haircut"],
+//     "goal": 40,
+//     "color": [99, 196, 126]
 //   },
-//   Groceries: {
-//     labels: ["Groceries"],
-//     goal: 200,
-//     color: [143, 15, 166]
+//   "Groceries": {
+//     "labels": ["Groceries"],
+//     "goal": 200,
+//     "color": [143, 15, 166]
 //   },
 //   "Other Food": {
-//     labels: ["Other Food", "Res", "Snack", "Snacks", "Coffee", "Drink"],
-//     goal: 300,
-//     color: [15, 242, 28]
+//     "labels": ["Other Food", "Res", "Snack", "Snacks", "Coffee", "Drink"],
+//     "goal": 300,
+//     "color": [15, 242, 28]
 //   },
 //   "Gas & Parking": {
-//     labels: ["Gas", "Parking"],
-//     goal: 30,
-//     color: [34, 38, 141]
+//     "labels": ["Gas", "Parking"],
+//     "goal": 30,
+//     "color": [34, 38, 141]
 //   },
-//   Insurance: {
-//     labels: ["Insurance"],
-//     goal: 40,
-//     color: [188, 159, 198]
+//   "Insurance": {
+//     "labels": ["Insurance"],
+//     "goal": 40,
+//     "color": [188, 159, 198]
 //   },
 //   "Bank & Credit Card": {
-//     labels: ["Credit Card", "Interest", "Atm", "Cc", "Venmo"],
-//     goal: 40,
-//     color: [62, 141, 138]
+//     "labels": ["Credit Card", "Interest", "Atm", "Cc", "Venmo"],
+//     "goal": 40,
+//     "color": [62, 141, 138]
 //   },
 //   "Student Loans": {
-//     labels: ["Student Loans"],
-//     goal: 400,
-//     color: [206, 117, 92]
+//     "labels": ["Student Loans"],
+//     "goal": 400,
+//     "color": [206, 117, 92]
 //   },
 //   "Vehicle Payments": {
-//     labels: ["Vehicle Payments", "Motorcycle", "Car"],
-//     goal: 300,
-//     color: [115, 73, 238]
+//     "labels": ["Vehicle Payments", "Motorcycle", "Car"],
+//     "goal": 300,
+//     "color": [115, 73, 238]
 //   },
 //   "Entertainment": {
-//     labels: ["Movies", "Bowling"],
-//     goal: 30,
-//     color: [206, 18, 160]
+//     "labels": ["Movies", "Bowling"],
+//     "goal": 30,
+//     "color": [206, 18, 160]
 //   },
 //   "Subscriptions": {
-//     labels: ["Subscription", "Subscriptions", "Sub", "Spotify", "Xxx"],
-//     goal: 25,
-//     color: [124, 232, 134]
+//     "labels": ["Subscription", "Subscriptions", "Sub", "Spotify", "Xxx"],
+//     "goal": 25,
+//     "color": [124, 232, 134]
 //   },
-//   Travel: {
-//     labels: ["Travel", "Flight"],
-//     goal: 300,
-//     color: [118, 55, 65]
+//   "Travel": {
+//     "labels": ["Travel", "Flight"],
+//     "goal": 300,
+//     "color": [118, 55, 65]
 //   },
 //   "Public Transportation": {
-//     labels: ["Uber", "Marta", "Transporation"],
-//     goal: 25,
-//     color: [252, 158, 155]
+//     "labels": ["Uber", "Marta", "Transporation"],
+//     "goal": 25,
+//     "color": [252, 158, 155]
 //   },
 //   "Special/Seasonal": {
-//     labels: ["Special", "Seasonal", "Graduation", "Gift", "Spring Break", "Recital", "Contacts"],
-//     goal: null,
-//     color: [227, 250, 194]
+//     "labels": ["Special", "Seasonal", "Graduation", "Gift", "Spring Break", "Recital", "Contacts"],
+//     "goal": null,
+//     "color": [227, 250, 194]
 //   },
-//   Other: {
-//     labels: ["Other"],
-//     goal: null,
-//     color: [100, 100, 100]
+//   "Other": {
+//     "labels": ["Other"],
+//     "goal": null,
+//     "color": [100, 100, 100]
 //   }
 // }
 
 // Scales and Axis (eventually use band scale for y-axis)
 const width = 1100;
 const height = 450;
-const categoryLength = Object.keys(categoryLabels).length;
+// const categoryLength = Object.keys(categoryLabels).length;
 const moveX = 40;
-const xDistance = (width - moveX)/categoryLength;
+let xDistance = (width - moveX)/categoryLength;
 const barWidth = 30;
 
 const heightScale = d3.scale.linear()
@@ -253,7 +268,12 @@ function update(data, number) {
   otherRectangles.enter()
   .append("rect")
   .attr("class", "bar")
-  .attr("x", (d, i) => i * xDistance)
+  // .attr("x", (d, i) => i * xDistance)
+  .attr("x", (d, i) => {
+    console.log(i);
+    console.log(xDistance);
+    return i * xDistance;
+  })
   .attr("y", (d, i) => height - heightScale(d.Cost) + 1)
   .attr("width", barWidth)
   .attr("height", 0)
@@ -298,7 +318,7 @@ let pause = false;
 // Changing the data each second
 let numeric = 1;
 setInterval(() => {
-  if (!pause) {
+  if (!pause && dataReady) {
     update(dataset, numeric);
     numeric++;
     if (numeric > 12) {
@@ -316,7 +336,7 @@ function showPause(e) {
 const svg = document.querySelector("svg");
 svg.onclick = e => {
   pause = !pause;
-  console.dir(e) //Find where offsetX and offsetY are and have dot
+  // console.dir(e) //Find where offsetX and offsetY are and have dot
   showPause(e);
 }
 
