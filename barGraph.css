@@ -1,21 +1,40 @@
+html {
+  /* background-color: green; */
+}
+
+body {
+  width: 90%;
+  /* background-color: red; */
+}
+
 .bar:hover {
   fill: black;
 }
 
 .yAxis {
   font-size: 10px;
+  font-weight: bold;
 }
 
 .categoryAxis {
   font-size: 10px;
+  font-weight: bold;
+  /* text-transform: uppercase; */
   /* display: none; */
 
 }
 
-svg {
-  background-color: #dddddd;
+.background { /* svg */
+  /* background-color: #dddddd; */
   /* background-color: rgb(225, 225, 225); */
+  background: linear-gradient(#00BFFF, #EEEEEE, #87CEFA, #EEEEEE);
+  /* opacity: 0.1; */
   border: 3px solid blue;
+
+}
+
+.heading {
+  background-color: rgba(0, 50, 255, 0.7);
 }
 
 span {
@@ -26,4 +45,5 @@ span {
 
 p {
   font-style: italic;
+  /* text-align: center; */
 }
