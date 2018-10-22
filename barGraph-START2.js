@@ -13,13 +13,13 @@ const heightScale = d3.scale.linear()
   .range([0, height]);
 
 const reverseHeightScale = d3.scale.linear()
-  .domain([]) // Min and max value. See heightScale for reference
-  .range([]); // How tall you want axis to be. See heightScale
+  .domain([0, 1050]) // Min and max value. See heightScale for reference
+  .range([height, 0]); // How tall you want axis to be. See heightScale
 
 
 // For Y-axis
 const axis = d3.svg.axis()
-  .ticks(/*number here*/) // How many ticks you want
+  .ticks(20) // How many ticks you want
   .tickSize(5)
   .tickPadding(5)
   .scale(reverseHeightScale)
@@ -27,9 +27,9 @@ const axis = d3.svg.axis()
 
 
 const svgContainer = d3.select("section")
-.append(/*element here*/)
+.append("svg")
 .attr("class", "background")
-.attr(/*attribute here*/) // You have height below. What else do you need?
+.attr("width", width) // You have height below. What else do you need?
 .attr("height", height+100)
 .append("g")
 .attr("class", "content")
@@ -49,7 +49,7 @@ function update(data, number) {
 
   // Rectangles using data binding
   const otherRectangles = svgContainer.selectAll(".bar")
-  .data(/*data here*/); // See above for referencing data
+  .data(processData(data, number)); // See above for referencing data
 
   // Updating month title
   document.querySelector("span").textContent = `${monthNames[number-1]}`;
@@ -66,11 +66,11 @@ function update(data, number) {
 
   // Creating bars
   otherRectangles.enter()
-  .append(/*shape here*/)
-  .attr(/*class here*/)
-  .attr(/*shape attr here*/, (d, i) => categoryScale(i))
-  .attr(/*shape attr here*/, (d, i) => height - heightScale(d.Cost) + 1)
-  .attr(/*shape attr here*/, barWidth)
+  .append("rect")
+  .attr("class", "bar")
+  .attr("x", (d, i) => categoryScale(i))
+  .attr("y", (d, i) => height - heightScale(d.Cost) + 1)
+  .attr("width", barWidth)
   .attr("height", 0)
   // attributes below for fill and transition. Leave as is
   .attr("fill-opacity", 0.1)
@@ -84,10 +84,8 @@ function update(data, number) {
   otherRectangles.enter()
   .append("line")
   .attr("class", "goalLine")
-  // .attr("x1", (d, i) => i * xDistance)
   .attr("x1", (d, i) => categoryScale(i))
   .attr("y1", d => (d.Goal) ? height - heightScale(d.Goal) : null)
-  // .attr("x2", (d, i) => (i * xDistance) + barWidth)
   .attr("x2", (d, i) => categoryScale(i) + barWidth)
   .attr("y2", d => (d.Goal) ? height - heightScale(d.Goal) : null)
   .attr("stroke-dasharray", 3.2)
@@ -115,3 +113,11 @@ setInterval(() => {
     }
   }
 }, 1500);
+
+const svg = document.querySelector("svg");
+
+svg.onclick = e => {
+  pause = !pause;
+  // console.dir(e) //Find where offsetX and offsetY are and have dot
+  showPause(e);
+};
