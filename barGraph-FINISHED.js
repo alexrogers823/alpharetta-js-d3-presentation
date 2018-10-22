@@ -1,169 +1,66 @@
 const dataset = [];
-console.time("Getting data");
-// fetch('https://gist.githubusercontent.com/alexrogers823/00de045f0858cc42e490464349824022/raw/934a543b52060e07008e799247910f9d8c91a544/expenses.json')
-// fetch('https://raw.githubusercontent.com/alexrogers823/interactiveBarGraph/master/InteractiveBarGraph/month_expenses_2016.json')
-fetch('https://raw.githubusercontent.com/alexrogers823/interactiveBarGraph/master/month_expenses_2016.json')
-  .then(blob => blob.json())
-  .then(data => {
-    console.timeEnd("Getting data");
-    // console.log(dataset);
-    // console.log(data);
-    dataset.push(...data);
-    // console.log(dataset);
+let categoryLabels;
+
+// Array of JSON data with Category data
+const requestSites = [
+  'https://raw.githubusercontent.com/alexrogers823/interactiveBarGraph/master/month_expenses_2016.json',
+  'https://gist.githubusercontent.com/alexrogers823/73335d86e2516993face9f7818bd9955/raw/89fa5fb90db60ff0949fd8af2d629b39d47d9dc6/barGraphCategories.json'];
+
+function fetchData(url) {
+  return fetch(url).then(blob => blob.json());
+}
+
+const arrayOfPromises = requestSites.map(site => fetchData(site));
+Promise.all(arrayOfPromises)
+  .then(arrayOfResults => {
+    console.log(arrayOfResults);
+    dataset.push(...arrayOfResults[0]);
+    categoryLabels = arrayOfResults[1];
+  })
+  .then(() => {
+    // Set all dependant variables after resolved promise
+    categoryLength = Object.keys(categoryLabels).length;
+    xDistance = (width - moveX)/categoryLength;
+
+    categoryScale = d3.scale.linear()
+      .domain([0, categoryLength])
+      .range([0, width - moveX]); //moveX + yAxis distance
+
+    categoryAxis = d3.svg.axis()
+      .ticks(categoryLength+1)
+      .tickSize(2)
+      .tickPadding(60)
+      .scale(categoryScale)
+      .tickFormat((d, i) => createCategoryNames(d, i))
+      .orient("bottom");
+
+    // Calling the categorical axis
+    svgContainer.append("g")
+      .attr("class", "categoryAxis")
+      .attr("transform", `translate(${moveX/2}, ${height+5})`)
+      .call(categoryAxis)
+      .selectAll("text")
+      .attr("transform", "rotate(45)");
   });
 
-// const categoryWords = [];
-// fetch('https://raw.githubusercontent.com/alexrogers823/interactiveBarGraph/master/InteractiveBarGraph/CategoryWords.json')
-//   .then(blob => blob.json())
-//   .then(data => categoryWords.push(data)); //no spread because it isn't array-based JSON
-//
-// let categoryLabels, categoryLength;
-// let dataReady = false;
-// let test = async function() {
-//   let fetcher = await fetch('https://gist.githubusercontent.com/alexrogers823/73335d86e2516993face9f7818bd9955/raw/89fa5fb90db60ff0949fd8af2d629b39d47d9dc6/barGraphCategories.json')
-//   // const response = await fetcher.json()
-//   .then(res => res.json())
-//   .then(res => res)
-//   .catch(err => console.error(err));
-//   return fetcher
-//
-//   // console.log('response: ',response);
-//   // return response;
-// };
-// console.log(test());
-// console.log('dat; ',data);
-// console.log('data: ',data);
-  // .then(data => {
-  //   // categoryLabels = Object.assign({}, data);
-  //   // cateogryLabels = JSON.parse(JSON.stringify(data));
-  //   categoryLabels = data;
-  //   dataReady = true;
-  //   console.log(categoryLabels);
-  //   categoryLength =  Object.keys(categoryLabels).length;
-  //   xDistance = (width - moveX)/categoryLength;
-  // });
+// Makes category names for ticks in Axis
+function createCategoryNames(d, i) {
+  let categoryNames = ["."];
+  for (let prop in categoryLabels) {
+    categoryNames.push(prop);
+  }
+  return categoryNames[i];
+}
 
 
 // Category labels. Find a way to add directly from month expenses data
-const categoryLabels = {
-  "Rent": {
-    "labels": ["Rent"],
-    "goal": 800,
-    "color": [209, 145, 105]
-  },
-  "Utilities": {
-    "labels": ["Util", "Utility", "Utilities"],
-    "goal": 225,
-    "color": [165, 20, 165]
-  },
-  "Phone": {
-    "labels": ["Phone"],
-    "goal": 65,
-    "color": [70, 150, 215]
-  },
-  "Apparel": {
-    "labels": ["Clothes"],
-    "goal": 50,
-    "color": [195, 195, 30]
-  },
-  "Supplies": {
-    "labels": ["Supplies", "Rain", "Bed"],
-    "goal": 150,
-    "color": [42, 193, 243]
-  },
-  "Technology": {
-    "labels": ["Tech"],
-    "goal": 60,
-    "color": [30, 240, 100]
-  },
-  "Services": {
-    "labels": ["Services", "Dry Cleaning", "Eyebrows"],
-    "goal": 30,
-    "color": [141, 155, 20]
-  },
-  "Health/Gym": {
-    "labels": ["Health", "Gym"],
-    "goal": 50,
-    "color": [164, 72, 235]
-  },
-  "Haircut": {
-    "labels": ["Haircut"],
-    "goal": 40,
-    "color": [99, 196, 126]
-  },
-  "Groceries": {
-    "labels": ["Groceries"],
-    "goal": 200,
-    "color": [143, 15, 166]
-  },
-  "Other Food": {
-    "labels": ["Other Food", "Res", "Snack", "Snacks", "Coffee", "Drink"],
-    "goal": 300,
-    "color": [15, 242, 28]
-  },
-  "Gas & Parking": {
-    "labels": ["Gas", "Parking"],
-    "goal": 30,
-    "color": [34, 38, 141]
-  },
-  "Insurance": {
-    "labels": ["Insurance"],
-    "goal": 40,
-    "color": [188, 159, 198]
-  },
-  "Bank & Credit Card": {
-    "labels": ["Credit Card", "Interest", "Atm", "Cc", "Venmo"],
-    "goal": 40,
-    "color": [62, 141, 138]
-  },
-  "Student Loans": {
-    "labels": ["Student Loans"],
-    "goal": 400,
-    "color": [206, 117, 92]
-  },
-  "Vehicle Payments": {
-    "labels": ["Vehicle Payments", "Motorcycle", "Car"],
-    "goal": 300,
-    "color": [115, 73, 238]
-  },
-  "Entertainment": {
-    "labels": ["Movies", "Bowling"],
-    "goal": 30,
-    "color": [206, 18, 160]
-  },
-  "Subscriptions": {
-    "labels": ["Subscription", "Subscriptions", "Sub", "Spotify", "Xxx"],
-    "goal": 25,
-    "color": [124, 232, 134]
-  },
-  "Travel": {
-    "labels": ["Travel", "Flight"],
-    "goal": 300,
-    "color": [118, 55, 65]
-  },
-  "Public Transportation": {
-    "labels": ["Uber", "Marta", "Transporation"],
-    "goal": 25,
-    "color": [252, 158, 155]
-  },
-  "Special/Seasonal": {
-    "labels": ["Special", "Seasonal", "Graduation", "Gift", "Spring Break", "Recital", "Contacts"],
-    "goal": null,
-    "color": [227, 250, 194]
-  },
-  "Other": {
-    "labels": ["Other"],
-    "goal": null,
-    "color": [100, 100, 100]
-  }
-}
 
 // Scales and Axis (eventually use band scale for y-axis)
 const width = 1100;
 const height = 450;
-const categoryLength = Object.keys(categoryLabels).length;
+let categoryLength;
 const moveX = 40;
-let xDistance = (width - moveX)/categoryLength;
+let xDistance;
 const barWidth = 30;
 
 const heightScale = d3.scale.linear()
@@ -178,9 +75,7 @@ const reverseHeightScale = d3.scale.linear()
 //   .domain(d3.range(categoryLength))
 //   .rangeRoundBands([0, width], .1);
 
-const categoryScale = d3.scale.linear()
-  .domain([0, categoryLength])
-  .range([moveX, width]); //moveX + yAxis distance
+let categoryScale;
 
 const axis = d3.svg.axis()
   .ticks(20)
@@ -189,29 +84,19 @@ const axis = d3.svg.axis()
   .scale(reverseHeightScale)
   .orient("left");
 
-const categoryAxis = d3.svg.axis()
-  .ticks(categoryLength)
-  .tickSize(2)
-  .tickPadding(45)
-  .scale(categoryScale)
-  .tickFormat((d, i) => {
-    categoryNames = [];
-    for (let prop in categoryLabels) {
-      categoryNames.push(prop);
-    }
-    return categoryNames[i];
-  })
-  .orient("bottom");
+let categoryAxis;
 
 // set variable for smooth transition
 const t = d3.transition().duration(750);
 
 
 // Without d3.json import
-const svgContainer = d3.select("body").append("svg")
+const svgContainer = d3.select("section").append("svg")
+.attr("class", "background")
 .attr("width", width)
-.attr("height", height+70)
+.attr("height", height+100)
 .append("g")
+.attr("class", "content")
 .attr("transform", `translate(${moveX}, -10)`);
 // .call(axis);
 
@@ -239,7 +124,7 @@ function processData(data, number) {
     newDataSet.push({Expense: prop, Cost: value, Goal: categoryLabels[prop].goal, Color: categoryLabels[prop].color});
   }
 
-
+  // Setting the "other" category from leftover totalValue
   newDataSet[newDataSet.length-1] = {Expense: "Other", Cost: totalExpenses - totalValue, Goal: categoryLabels["Other"].goal, Color: categoryLabels["Other"].color};
 
   // console.log(newDataSet)
@@ -271,7 +156,7 @@ function update(data, number) {
 
   // Updating old elements that are present in new data
   otherRectangles.transition(t)
-  .attr("x", (d, i) => i * xDistance)
+  .attr("x", (d, i) => categoryScale(i))
   .attr("y", (d, i) => height - heightScale(d.Cost) + 1)
   .attr("width", barWidth)
   .attr("height", (d, i) => heightScale(d.Cost) + 1)
@@ -282,11 +167,7 @@ function update(data, number) {
   .append("rect")
   .attr("class", "bar")
   // .attr("x", (d, i) => i * xDistance)
-  .attr("x", (d, i) => {
-    // console.log(i);
-    // console.log(xDistance);
-    return i * xDistance;
-  })
+  .attr("x", (d, i) => categoryScale(i))
   .attr("y", (d, i) => height - heightScale(d.Cost) + 1)
   .attr("width", barWidth)
   .attr("height", 0)
@@ -300,9 +181,11 @@ function update(data, number) {
   otherRectangles.enter()
   .append("line")
   .attr("class", "goalLine")
-  .attr("x1", (d, i) => i * xDistance)
+  // .attr("x1", (d, i) => i * xDistance)
+  .attr("x1", (d, i) => categoryScale(i))
   .attr("y1", d => (d.Goal) ? height - heightScale(d.Goal) : null)
-  .attr("x2", (d, i) => (i * xDistance) + barWidth)
+  // .attr("x2", (d, i) => (i * xDistance) + barWidth)
+  .attr("x2", (d, i) => categoryScale(i) + barWidth)
   .attr("y2", d => (d.Goal) ? height - heightScale(d.Goal) : null)
   .attr("stroke-dasharray", 3.2)
   .attr("stroke", d => (d.Cost > d.Goal) ? "white" : "black")
@@ -318,16 +201,7 @@ svgContainer.append("g")
   .call(axis);
 
 
-// Calling the categorical axis
-svgContainer.append("g")
-  .attr("class", "categoryAxis")
-  .attr("transform", `translate(${moveX/2}, ${height+5})`)
-  .call(categoryAxis)
-  .selectAll("text")
-  .attr("transform", "rotate(45)");
-
 let pause = false;
-
 // Changing the data each second
 let numeric = 1;
 setInterval(() => {
@@ -340,10 +214,10 @@ setInterval(() => {
   }
 }, 1500);
 
+
 function showPause(e) {
   console.log(e);
 }
-
 
 
 const svg = document.querySelector("svg");
@@ -352,7 +226,3 @@ svg.onclick = e => {
   // console.dir(e) //Find where offsetX and offsetY are and have dot
   showPause(e);
 };
-
-// console.log(example);
-// console.log(data1);
-// update(dataset, 1);
