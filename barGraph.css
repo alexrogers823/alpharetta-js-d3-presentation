@@ -19,18 +19,10 @@ body {
 .categoryAxis {
   font-size: 10px;
   font-weight: bold;
-  /* text-transform: uppercase; */
-  /* display: none; */
-
 }
 
 .background { /* svg */
-  /* background-color: #dddddd; */
-  /* background-color: rgb(225, 225, 225); */
   background: linear-gradient(#00BFFF, #EEEEEE, #87CEFA, #FFFFFF);
-  /* opacity: 0.1; */
-  /* border: 3px solid blue; */
-
 }
 
 .heading {
