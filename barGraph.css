@@ -27,14 +27,19 @@ body {
 .background { /* svg */
   /* background-color: #dddddd; */
   /* background-color: rgb(225, 225, 225); */
-  background: linear-gradient(#00BFFF, #EEEEEE, #87CEFA, #EEEEEE);
+  background: linear-gradient(#00BFFF, #EEEEEE, #87CEFA, #FFFFFF);
   /* opacity: 0.1; */
-  border: 3px solid blue;
+  /* border: 3px solid blue; */
 
 }
 
 .heading {
-  background-color: rgba(0, 50, 255, 0.7);
+  background-color: rgba(0, 50, 255, 0.4);
+  width: 50%;
+}
+
+.fab:hover {
+  color: green;
 }
 
 span {
@@ -43,7 +48,9 @@ span {
   text-shadow: 1px 1px 1px #adadad;
 }
 
-p {
+#monthTitle {
   font-style: italic;
+  font-size: 20px;
+  padding: 3px;
   /* text-align: center; */
 }
